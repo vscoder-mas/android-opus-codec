@@ -1,6 +1,7 @@
 package com.theeasiestway.opusapp.mic
 
 import android.media.*
+import android.media.audiofx.AcousticEchoCanceler
 import android.media.audiofx.AutomaticGainControl
 import android.media.audiofx.NoiseSuppressor
 import android.util.Log
@@ -18,6 +19,7 @@ object ControllerAudio {
     private var trackReady = false
     private var noiseSuppressor: NoiseSuppressor? = null
     private var automaticGainControl: AutomaticGainControl? = null
+    private var acousticEchoCanceler: AcousticEchoCanceler? = null
 
     //
     // Record
@@ -54,6 +56,17 @@ object ControllerAudio {
                         if (automaticGainControl != null) automaticGainControl!!.enabled = true
                     } catch (e: Exception) {
                         Log.e(TAG, "[initRecorder] unable to init automatic gain control: $e")
+                    }
+                }
+
+                if (AcousticEchoCanceler.isAvailable()) {
+                    try {
+                        acousticEchoCanceler = AcousticEchoCanceler.create(recorder.audioSessionId)
+                        if (acousticEchoCanceler != null) {
+                            acousticEchoCanceler!!.enabled = true
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "[initRecorder] unable to init acoustic echo canceler: $e")
                     }
                 }
                 onMicStateChange(true)
