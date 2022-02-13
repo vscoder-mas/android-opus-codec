@@ -7,7 +7,9 @@
 
 std::vector<uint8_t> SamplesConverter::convert(short **array, int length) {
     std::vector<uint8_t> result;
-    if (!array) return result;
+    if (!array) {
+        return result;
+    }
 
     for (int i = 0; i < length; ++i) {
         uint8_t hi = (uint8_t) ((*array)[i] & 0xFF);
@@ -19,9 +21,28 @@ std::vector<uint8_t> SamplesConverter::convert(short **array, int length) {
     return result;
 }
 
+std::vector<uint8_t> SamplesConverter::convert1(short *array, int length) {
+    std::vector<uint8_t> ret;
+    if (!array) {
+        return ret;
+    }
+
+    for (int i = 0; i < length; i++) {
+        uint8_t hi = (uint8_t) (array[i] & 0xFF);
+        uint8_t low = (uint8_t) ((array[i] >> 8) & 0xFF);
+        ret.push_back(hi);
+        ret.push_back(low);
+    }
+
+    return ret;
+}
+
+
 std::vector<short> SamplesConverter::convert(uint8_t **array, int length) {
     std::vector<short> result;
-    if (!array) return result;
+    if (!array) {
+        return result;
+    }
 
     for (int i = 0; i < length; i += 2) {
         short val = (short) (((*array)[i + 1]) << 8 | (*array)[i]);

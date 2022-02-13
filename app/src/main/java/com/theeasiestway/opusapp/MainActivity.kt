@@ -16,7 +16,6 @@ import com.theeasiestway.opusapp.mic.ControllerAudio
 //
 
 class MainActivity : AppCompatActivity() {
-
     private val TAG = "OpusActivity"
     private val audioPermission = android.Manifest.permission.RECORD_AUDIO
     private val readPermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -170,7 +169,8 @@ class MainActivity : AppCompatActivity() {
     private fun handleShorts() {
         val frame = ControllerAudio.getFrameShort() ?: return
         val encoded = codec.encode(frame, FRAME_SIZE_SHORT) ?: return
-        Log.d(TAG, "encoded: ${frame.size} shorts of ${if (CHANNELS.v == 1) "MONO" else "STEREO"} audio into ${encoded.size} shorts")
+        Log.d(TAG, "encoded: ${frame.size} shorts of ${if (CHANNELS.v == 1) 
+            "MONO" else "STEREO"} audio into ${encoded.size} shorts")
         val decoded = codec.decode(encoded, FRAME_SIZE_SHORT) ?: return
         Log.d(TAG, "decoded: ${decoded.size} shorts")
 
@@ -178,14 +178,19 @@ class MainActivity : AppCompatActivity() {
             val converted = codec.convert(decoded) ?: return
             Log.d(TAG, "converted: ${decoded.size} shorts into ${converted.size} bytes")
             ControllerAudio.write(converted)
-        } else ControllerAudio.write(decoded)
+        } else {
+            ControllerAudio.write(decoded)
+        }
+
         Log.d(TAG, "===========================================")
     }
 
     private fun handleBytes() {
         val frame = ControllerAudio.getFrame() ?: return
+        //FRAME_SIZE_BYTE = CHUNK_SIZE / 2 / CHANNELS.v
         val encoded = codec.encode(frame, FRAME_SIZE_BYTE) ?: return
-        Log.d(TAG, "encoded: ${frame.size} bytes of ${if (CHANNELS.v == 1) "MONO" else "STEREO"} audio into ${encoded.size} bytes")
+        Log.d(TAG, "encoded: ${frame.size} bytes of ${if (CHANNELS.v == 1) 
+            "MONO" else "STEREO"} audio into ${encoded.size} bytes")
         val decoded = codec.decode(encoded, FRAME_SIZE_BYTE) ?: return
         Log.d(TAG, "decoded: ${decoded.size} bytes")
 
@@ -193,17 +198,23 @@ class MainActivity : AppCompatActivity() {
             val converted = codec.convert(decoded) ?: return
             Log.d(TAG, "converted: ${decoded.size} bytes into ${converted.size} shorts")
             ControllerAudio.write(converted)
-        } else ControllerAudio.write(decoded)
+        } else {
+            ControllerAudio.write(decoded)
+        }
+
         Log.d(TAG, "===========================================")
     }
 
     private fun requestPermissions() {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) startLoop()
-        else if (checkSelfPermission(audioPermission) != PackageManager.PERMISSION_GRANTED ||
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            startLoop()
+        } else if (checkSelfPermission(audioPermission) != PackageManager.PERMISSION_GRANTED ||
             checkSelfPermission(readPermission) != PackageManager.PERMISSION_GRANTED ||
             checkSelfPermission(writePermission) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(audioPermission, readPermission, writePermission), 123)
-        } else startLoop()
+        } else {
+            startLoop()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -213,8 +224,11 @@ class MainActivity : AppCompatActivity() {
             requestCode == 123) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                 grantResults[1] == PackageManager.PERMISSION_GRANTED &&
-                grantResults[2] == PackageManager.PERMISSION_GRANTED) startLoop()
-            else Toast.makeText(this, "App doesn't have enough permissions to continue", Toast.LENGTH_LONG).show()
+                grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    startLoop()
+            } else {
+                Toast.makeText(this, "App doesn't have enough permissions to continue", Toast.LENGTH_LONG).show()
+            }
         }
     }
 

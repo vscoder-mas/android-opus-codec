@@ -72,6 +72,7 @@ object ControllerAudio {
     }
 
     fun getFrame(): ByteArray? {
+        //frameSize -> CHUNK_SIZE
         val frame = ByteArray(frameSize)
         var offset = 0
         var remained = frame.size
@@ -80,7 +81,11 @@ object ControllerAudio {
             offset += read
             remained -= read
         }
-        if (remained <= 0) return frame
+
+        if (remained <= 0) {
+            return frame
+        }
+
         return null
     }
 
@@ -93,7 +98,10 @@ object ControllerAudio {
             offset += read
             remained -= read
         }
-        if (remained <= 0) return frame
+        if (remained <= 0) {
+            return frame
+        }
+
         return null
     }
 
@@ -115,7 +123,6 @@ object ControllerAudio {
     //
     // Play
     //
-
     fun initTrack(sampleRate: Int, isMono: Boolean) {
         val bufferSize = AudioRecord.getMinBufferSize(
             sampleRate, if (isMono) AudioFormat.CHANNEL_IN_MONO
@@ -134,7 +141,6 @@ object ControllerAudio {
                 )
 
                 // track.setStereoVolume(0f, 1f) // it may be useful for stereo audio
-
                 if (track.state == AudioRecord.STATE_INITIALIZED) {
                     track.play()
                     trackReady = true

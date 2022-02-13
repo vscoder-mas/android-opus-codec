@@ -140,7 +140,9 @@ std::vector<uint8_t> CodecOpus::decode(uint8_t *bytes, int length, int frameSize
         return result;
     }
 
-    result = SamplesConverter::convert(&outBuffer, resultLength * decoderNumChannels);
+    //resultLength:160
+//    result = SamplesConverter::convert(&outBuffer, resultLength * decoderNumChannels);
+    result = SamplesConverter::convert1(outBuffer, resultLength * decoderNumChannels);
     free(outBuffer);
     return result;
 }
