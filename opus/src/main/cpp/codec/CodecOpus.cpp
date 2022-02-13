@@ -9,7 +9,6 @@
 //
 // Encoder
 //
-
 int CodecOpus::encoderInit(int sampleRate, int numChannels, int application) {
     if (numChannels != 1 && numChannels != 2)
         LOGE(TAG, "[encoderInit] numChannels is incorrect: %d - it must be either 1 or 2, "
@@ -92,7 +91,6 @@ void CodecOpus::encoderRelease() {
 //
 // Decoder
 //
-
 int CodecOpus::decoderInit(int sampleRate, int numChannels) {
     if (numChannels != 1 && numChannels != 2)
         LOGE(TAG, "[decoderInit] numChannels is incorrect: %d - it must be either 1 or 2, "
