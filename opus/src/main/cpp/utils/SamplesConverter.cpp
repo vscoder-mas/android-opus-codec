@@ -15,6 +15,7 @@ std::vector<uint8_t> SamplesConverter::convert(short **array, int length) {
         result.push_back(hi);
         result.push_back(low);
     }
+
     return result;
 }
 
@@ -23,8 +24,9 @@ std::vector<short> SamplesConverter::convert(uint8_t **array, int length) {
     if (!array) return result;
 
     for (int i = 0; i < length; i += 2) {
-        short val = (short)(((*array)[i + 1]) << 8 | (*array)[i]);
+        short val = (short) (((*array)[i + 1]) << 8 | (*array)[i]);
         result.push_back(val);
     }
+
     return result;
 }

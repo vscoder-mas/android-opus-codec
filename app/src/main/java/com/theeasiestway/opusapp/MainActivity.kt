@@ -130,7 +130,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun startLoop() {
         stopLoop()
-
         vSampleRateSeek.isEnabled = false
         vBytes.isEnabled = false
         vShorts.isEnabled = false
@@ -147,8 +146,16 @@ class MainActivity : AppCompatActivity() {
         ControllerAudio.initTrack(SAMPLE_RATE.v, CHANNELS.v == 1)
         ControllerAudio.startRecord()
         runLoop = true
+
         Thread {
-            while (runLoop) { if (handleShorts) handleShorts() else handleBytes() }
+            while (runLoop) {
+                if (handleShorts) {
+                    handleShorts()
+                } else {
+                    handleBytes()
+                }
+            }
+
             if (!runLoop) {
                 codec.encoderRelease()
                 codec.decoderRelease()

@@ -10,7 +10,6 @@ import android.util.Log
 //
 
 object ControllerAudio {
-
     private const val TAG = "ControllerAudio"
     private var frameSize: Int = -1
     private lateinit var recorder: AudioRecord
@@ -23,9 +22,12 @@ object ControllerAudio {
     //
     // Record
     //
-
     fun initRecorder(sampleRate: Int, frameSize: Int, isMono: Boolean) {
-        val bufferSize = AudioRecord.getMinBufferSize(sampleRate, if (isMono) AudioFormat.CHANNEL_IN_MONO else AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT)
+        val bufferSize = AudioRecord.getMinBufferSize(
+            sampleRate, if (isMono) AudioFormat.CHANNEL_IN_MONO
+            else AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT
+        )
+
         for (i in 0..5) {
             try {
                 recorder = AudioRecord(
@@ -37,23 +39,28 @@ object ControllerAudio {
                 )
 
                 ControllerAudio.frameSize = frameSize
-
                 if (NoiseSuppressor.isAvailable()) {
                     try {
                         noiseSuppressor = NoiseSuppressor.create(recorder.audioSessionId)
                         if (noiseSuppressor != null) noiseSuppressor!!.enabled = true
-                    } catch (e: Exception) { Log.e(TAG, "[initRecorder] unable to init noise suppressor: $e") }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "[initRecorder] unable to init noise suppressor: $e")
+                    }
                 }
 
                 if (AutomaticGainControl.isAvailable()) {
                     try {
                         automaticGainControl = AutomaticGainControl.create(recorder.audioSessionId)
                         if (automaticGainControl != null) automaticGainControl!!.enabled = true
-                    } catch (e: Exception) { Log.e(TAG, "[initRecorder] unable to init automatic gain control: $e") }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "[initRecorder] unable to init automatic gain control: $e")
+                    }
                 }
                 onMicStateChange(true)
                 break
-            } catch (e: Exception) { Log.e(TAG, "[initRecorder] error: $e") }
+            } catch (e: Exception) {
+                Log.e(TAG, "[initRecorder] error: $e")
+            }
         }
     }
 
@@ -90,7 +97,7 @@ object ControllerAudio {
         return null
     }
 
-    fun onMicStateChange(micEnabled: Boolean) {
+    private fun onMicStateChange(micEnabled: Boolean) {
         ControllerAudio.micEnabled = micEnabled
     }
 
@@ -100,7 +107,9 @@ object ControllerAudio {
             recorder.release()
             noiseSuppressor?.release()
             automaticGainControl?.release()
-        } catch (e: Exception) { Log.e(TAG, "[stopRecord] error: $e") }
+        } catch (e: Exception) {
+            Log.e(TAG, "[stopRecord] error: $e")
+        }
     }
 
     //
@@ -108,7 +117,11 @@ object ControllerAudio {
     //
 
     fun initTrack(sampleRate: Int, isMono: Boolean) {
-        val bufferSize = AudioRecord.getMinBufferSize(sampleRate, if (isMono) AudioFormat.CHANNEL_IN_MONO else AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT)
+        val bufferSize = AudioRecord.getMinBufferSize(
+            sampleRate, if (isMono) AudioFormat.CHANNEL_IN_MONO
+            else AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT
+        )
+
         for (i in 0..5) {
             try {
                 track = AudioTrack(
@@ -120,14 +133,16 @@ object ControllerAudio {
                     AudioTrack.MODE_STREAM
                 )
 
-               // track.setStereoVolume(0f, 1f) // it may be useful for stereo audio
+                // track.setStereoVolume(0f, 1f) // it may be useful for stereo audio
 
                 if (track.state == AudioRecord.STATE_INITIALIZED) {
                     track.play()
                     trackReady = true
                     break
                 }
-            } catch (e: Exception) { Log.e(TAG, "[initTrack] error: $e") }
+            } catch (e: Exception) {
+                Log.e(TAG, "[initTrack] error: $e")
+            }
         }
     }
 
